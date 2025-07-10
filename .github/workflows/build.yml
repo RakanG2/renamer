@@ -1,0 +1,33 @@
+name: Build Renamer GUI EXE
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pdfplumber tkinterdnd2 pyinstaller
+
+      - name: Build EXE
+        run: |
+          pyinstaller --onefile --windowed renamer_gui.py --name renamer_gui
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: renamer_gui_exe
+          path: dist/renamer_gui.exe
